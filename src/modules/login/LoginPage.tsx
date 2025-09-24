@@ -134,7 +134,6 @@ export default function LoginPage() {
             </Card>
         </div>
         
-        {/* Text section below login */}
         <div className="w-full max-w-4xl mx-auto p-8">
             <h3>Tại sao phải dùng key khi sử dụng list rendering?</h3>
             <p>- Các key giúp React xác định những phần tử nào đã thay đổi, được thêm, hay bị xóa hoặc cập nhật khi render lại danh sách.</p>
