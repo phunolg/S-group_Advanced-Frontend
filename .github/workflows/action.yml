@@ -37,15 +37,13 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: my-app/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('my-app/package-lock.json') }}
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Install dependencies
-        working-directory: ./my-app
         run: npm ci
       - name: Build
-        working-directory: ./my-app
         run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -53,7 +51,7 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           # Upload dist folder
-          path: './my-app/dist'
+          path: './dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
