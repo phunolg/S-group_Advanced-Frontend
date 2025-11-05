@@ -11,6 +11,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/S-group_Advanced-Frontend/',
-
+  base: process.env.NODE_ENV === 'production' ? '/S-group_Advanced-Frontend/' : '/',
 })
