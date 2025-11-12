@@ -3,7 +3,7 @@ import { Layout, LogOut, ChevronDown, Plus, ChevronRight, Kanban } from 'lucide-
 import { useState } from 'react';
 import { Button } from '../../../shared/ui/button/button';
 import { logout } from '../../../shared/utils/logout';
-import type { Workspace, Board } from '../../../shared/lib/types';
+import { useDashboard } from '../../../shared/context/DashboardContext';
 
 interface SidebarProps {
   user?: {
@@ -11,26 +11,26 @@ interface SidebarProps {
     email: string;
     roles: string[];
   } | null;
-  workspaces?: Workspace[];
-  boards?: Board[];
-  currentWorkspace?: Workspace | null;
-  onWorkspaceChange?: (workspace: Workspace) => void;
+  workspaces?: any[];
+  boards?: any[];
+  currentWorkspace?: any | null;
+  onWorkspaceChange?: (workspace: any) => void;
   onCreateWorkspace?: () => void;
   onCreateBoard?: () => void;
 }
 
-export function Sidebar({ user, workspaces = [], boards = [], currentWorkspace, onWorkspaceChange, onCreateWorkspace, onCreateBoard }: SidebarProps) {
+export function Sidebar({ user, onCreateWorkspace }: SidebarProps) {
   const location = useLocation();
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
   const [isBoardsOpen, setIsBoardsOpen] = useState(true);
+
+  const { workspaces, currentWorkspace, setCurrentWorkspace, getCurrentWorkspaceBoards } = useDashboard();
+  const currentWorkspaceBoards = getCurrentWorkspaceBoards();
 
   const handleLogout = () => {
     logout();
     window.location.href = '/login';
   };
-
-  // Filter boards for current workspace
-  const currentWorkspaceBoards = boards.filter(board => board.workspace_id === currentWorkspace?.id);
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
@@ -79,7 +79,7 @@ export function Sidebar({ user, workspaces = [], boards = [], currentWorkspace, 
                       <button
                         key={workspace.id}
                         onClick={() => {
-                          onWorkspaceChange?.(workspace);
+                          setCurrentWorkspace(workspace);
                           setIsWorkspaceMenuOpen(false);
                         }}
                         className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 transition-colors"

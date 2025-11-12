@@ -1,43 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Plus, Users, Kanban } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../../../shared/ui/button/button';
-import { getWorkspaces } from '../../../features/workspace/model/workspaceApi';
-import { getAllBoards } from '../../../features/board/model/boardApi';
+import { useDashboard } from '../../../shared/context/DashboardContext';
 import { CreateWorkspaceDialog } from '../../../features/workspace/ui/CreateWorkspaceDialog';
 import { CreateBoardDialog } from '../../../features/board/ui/CreateBoardDialog';
-import type { Workspace, Board } from '../../../shared/lib/types';
 
 const Dashboard = () => {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
-  const [boards, setBoards] = useState<Board[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const {
+    workspaces,
+    boards,
+    isLoading,
+    refreshWorkspaces,
+    refreshBoards
+  } = useDashboard();
+  
   const [isCreateWorkspaceDialogOpen, setIsCreateWorkspaceDialogOpen] = useState(false);
   const [isCreateBoardDialogOpen, setIsCreateBoardDialogOpen] = useState(false);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>();
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [workspacesData, boardsData] = await Promise.all([
-        getWorkspaces(),
-        getAllBoards()
-      ]);
-      console.log('Fetched boards:', boardsData);
-      setWorkspaces(workspacesData);
-      setBoards(boardsData);
-    } catch (err) {
-      setError('Failed to fetch data');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const getWorkspaceBoards = (workspaceId: string) => {
     const filtered = boards.filter(board => board.workspace_id === workspaceId);
@@ -50,7 +30,7 @@ const Dashboard = () => {
     setIsCreateBoardDialogOpen(true);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-4">
@@ -60,16 +40,6 @@ const Dashboard = () => {
               <div key={i} className="h-48 bg-gray-200 rounded-lg"></div>
             ))}
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-600">{error}</p>
         </div>
       </div>
     );
@@ -96,13 +66,13 @@ const Dashboard = () => {
       <CreateWorkspaceDialog
         open={isCreateWorkspaceDialogOpen}
         onClose={() => setIsCreateWorkspaceDialogOpen(false)}
-        onSuccess={fetchData}
+        onSuccess={refreshWorkspaces}
       />
       
       <CreateBoardDialog
         open={isCreateBoardDialogOpen}
         onClose={() => setIsCreateBoardDialogOpen(false)}
-        onSuccess={fetchData}
+        onSuccess={refreshBoards}
         workspaceId={selectedWorkspaceId}
       />
 

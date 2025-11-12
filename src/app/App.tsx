@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "../shared/ProtectedRoute";
 import AxiosInterceptor from "../shared/config/axiosInterceptor";
 import { AppLayout } from "../features/app/ui/AppLayout";
+import { DashboardProvider } from "../shared/context/DashboardContext";
 
 // Lazy load pages
 const LoginPage = lazy(() => import("../pages/login/ui/LoginPage"));
@@ -29,7 +30,9 @@ function App() {
           
           <Route path="/" element={
             <ProtectedRoute>
-              <AppLayout />
+              <DashboardProvider>
+                <AppLayout />
+              </DashboardProvider>
             </ProtectedRoute>
           }>
             <Route index element={<Navigate to="/dashboard" replace />} />
